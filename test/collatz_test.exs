@@ -99,11 +99,32 @@ defmodule CollatzTest do
     end
   end
 
-  test "run returns [7, 11, 17, 13, 5, 1], given 7" do
-    assert Collatz.run(7) == [7, 11, 17, 13, 5, 1]
+  test "run returns [7, 22, 11, 34, 17, ...], given 7" do
+    assert Collatz.run(7) ==
+      [7, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2, 1]
   end
 
-  test "run returns [1] for a large power of 2" do
-    assert Collatz.run(trunc(:math.pow(2, 1023))) == [1]
+  test "run returns big list for a large power of 2" do
+    assert length(Collatz.run(trunc(:math.pow(2, 1023)))) == 1024
+  end
+
+  test "run_odd fails for a negative input" do
+    assert_raise FunctionClauseError, fn ->
+      Collatz.run_odd -1
+    end
+  end
+
+  test "run_odd fails for a floating-point input" do
+    assert_raise FunctionClauseError, fn ->
+      Collatz.run_odd 0.2
+    end
+  end
+
+  test "run_odd returns [7, 11, 17, 13, 5, 1], given 7" do
+    assert Collatz.run_odd(7) == [7, 11, 17, 13, 5, 1]
+  end
+
+  test "run_odd returns [1] for a large power of 2" do
+    assert Collatz.run_odd(trunc(:math.pow(2, 1023))) == [1]
   end
 end

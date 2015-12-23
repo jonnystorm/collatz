@@ -1,4 +1,14 @@
 defmodule Collatz do
+  @moduledoc """
+  From https://en.wikipedia.org/wiki/Collatz_conjecture:
+
+  "The [Collatz] conjecture can be summarized as follows. Take any natural
+  number n. If n is even, divide it by 2 to get n / 2. If n is odd, multiply it
+  by 3 and add 1 to obtain 3n + 1. Repeat the process indefinitely. The
+  conjecture is that, no matter what number you start with, you will always
+  eventually reach 1."
+  """
+
   defmacro is_even(n) do
     quote do
       rem(unquote(n), 2) == 0 and unquote(n) != 0
@@ -33,14 +43,14 @@ defmodule Collatz do
     3*n + 1
   end
 
-  defp _run(1, acc) do
+  defp _run_odd(1, acc) do
     acc ++ [1]
   end
-  defp _run(n, acc) when is_odd n do
-    _run step(n), acc ++ [n]
+  defp _run_odd(n, acc) when is_odd n do
+    _run_odd step(n), acc ++ [n]
   end
-  defp _run(n, acc) when is_even n do
-    _run step(n), acc
+  defp _run_odd(n, acc) when is_even n do
+    _run_odd step(n), acc
   end
 
   @doc """
@@ -49,9 +59,19 @@ defmodule Collatz do
   iex> Collatz.run 7
   [7, 11, 17, 13, 5, 1]
   """
-  @spec run(pos_integer) :: [pos_integer]
+  @spec run_odd(pos_integer) :: [pos_integer]
+  def run_odd(n) when is_natural n do
+    _run_odd n, []
+  end
+
+  @spec run_odd(pos_integer) :: [pos_integer]
   def run(n) when is_natural n do
-    _run n, []
+    sequence =
+      n
+        |> Stream.iterate(&Collatz.step(&1))
+        |> Enum.take_while(&(&1 > 1))
+
+    sequence ++ [1]
   end
 
   defp edge_to_dot({v1, v2}) do
@@ -84,7 +104,7 @@ defmodule Collatz do
   def graph(range \\ 1..256) do
     edges =
       Enum.reduce(range, %{}, fn(n, acc) ->
-        run(n)
+        run_odd(n)
           |> Stream.chunk(2, 1)
           |> Stream.map(&List.to_tuple(&1))
           |> Enum.into(%{})
