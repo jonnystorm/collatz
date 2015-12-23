@@ -1,7 +1,7 @@
 Collatz
 =======
 
-Helper functions for investigating the Collatz Conjecture and visualizing the orbits of the corresponding sequence it describes. Inputs are restricted to the natural numbers.
+Helper functions for investigating the Collatz Conjecture and visualizing the orbits of the sequences it describes. Inputs are restricted to the natural numbers.
 
 Subsequent hailstone numbers are computed using step/1:
 ```
