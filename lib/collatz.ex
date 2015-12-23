@@ -64,7 +64,7 @@ defmodule Collatz do
     _run_odd n, []
   end
 
-  @spec run_odd(pos_integer) :: [pos_integer]
+  @spec run(pos_integer) :: [pos_integer]
   def run(n) when is_natural n do
     sequence =
       n
